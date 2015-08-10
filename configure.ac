@@ -12,6 +12,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 AM_PROG_CC_C_O
+AM_PROG_AR
 # Checks for libraries.
 
 # Checks for header files.
