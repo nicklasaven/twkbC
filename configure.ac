@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([twkb_decoder], [0.1], [nicklas.aven@jordogskog.no])
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign -Wall])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 
