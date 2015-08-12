@@ -70,28 +70,22 @@ static char * test_svarint5() {
     return 0;
 }
 
-static uint8_t* hex2intbuf(char * hexstr,size_t *size)
+static uint8_t* hex2intbuf(const char * hexstr,size_t *size)
 {
-    uint8_t *res, res_byte;
+    uint8_t *res;
     size_t len = strlen(hexstr);
     *size=len/2;
-    char c, *ptr;
-    ptr = NULL;
+    char c[4];
+	
     int i;
     res = malloc(len/2);
 
     *res=0;
     for (i=0; i<len/2; i++)
     {
-        res_byte=0;
-        c = hexstr[2*i];
-        res_byte = res_byte | ((uint8_t) strtoul(&c,&ptr,16));
-        res_byte  =res_byte << 4;
-        c = hexstr[2*i+1];
-        res_byte = res_byte | ((uint8_t) strtoul(&c,&ptr,16));
-        res[i] = res_byte;
+	snprintf(c,3,"%s",hexstr +2*i);
+       res[i] = (uint8_t) strtoul(c,NULL,16);
     }
-
     return res;
 }
 
@@ -387,7 +381,7 @@ static char * test_esrijson_many_geometries1(buffer_collection *res_buf) {
    uint8_t *buf = hex2intbuf("0100020201000202", &size);
     char *txt = twkb2esriJSON(buf,size,32633);
     char *cmp_txt="[{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":32633}},{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":32633}}]";
-    printf("%s\n",txt);
+    //~ printf("%s\n",txt);
     mu_assert("error, test_esrijson_many_geometries1_1",(strcmp(txt, cmp_txt))==0);
     free(txt);
 free(buf);
@@ -399,7 +393,7 @@ static char * test_esrijson_n_decimals(buffer_collection *res_buf) {
    uint8_t *buf = hex2intbuf("a504012e04eea7800102000202040102", &size);
     char *txt = twkb2esriJSON(buf,size,4326);
     char *cmp_txt="[{\"GlobalId\":23,\"geometry\":{\"paths\":[[[10.51127,0.00001],[10.51127,0.00002],[10.51128,0.00004],[10.51127,0.00005]]],\"spatialReference\":4326}}]";
-    //~ printf("%s\n",txt);
+    printf("%s\n",txt);
     mu_assert("error, test_esrijson_n_decimals_1",(strcmp(txt, cmp_txt))==0);
     free(txt);
 free(buf);
@@ -417,9 +411,11 @@ static char * test_esrijson_filereading(buffer_collection *res_buf) {
 
 
 static char * all_tests() {
-
+int i;
     printf("---------------------------------------------------\n");
     buffer_collection res_buf;
+	for (i=0;i<1;i++)
+	{
     init_res_buf(&res_buf);
     mu_run_test(test_uvarint1,&res_buf);
     mu_run_test(test_uvarint2,&res_buf);
@@ -431,33 +427,56 @@ static char * all_tests() {
 	
 	
     mu_run_test(test_geoJSON_point1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_line1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_polygon1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_polygon2,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_collection1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_collection2,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_collection3,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_collection4,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_collection5,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_many_geometries1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_geoJSON_n_decimals,&res_buf);
+    printf("---------------------------------------------------\n");
 	
     mu_run_test(test_esrijson_point1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_line1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_polygon1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_polygon2,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_collection1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_collection2,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_collection3,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_collection4,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_collection5,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_many_geometries1,&res_buf);
+    printf("---------------------------------------------------\n");
     mu_run_test(test_esrijson_n_decimals,&res_buf);
+    printf("---------------------------------------------------\n");
     
     
   mu_run_test(test_filereading2geoJSON,&res_buf);
  //   mu_run_test(test_filereading,&res_buf);
     destroy_buffer(&res_buf);
+    }
     return 0;
 }
 
