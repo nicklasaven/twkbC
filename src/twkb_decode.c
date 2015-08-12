@@ -38,7 +38,6 @@ decode_twkb(TWKB_PARSE_STATE *old_ts)
 {    TWKB_PARSE_STATE ts;
     init_decode(&ts, old_ts);
     read_header (&ts);
-	
     switch (ts.type)
     {
     case POINTTYPE:
@@ -56,6 +55,9 @@ decode_twkb(TWKB_PARSE_STATE *old_ts)
     case COLLECTIONTYPE:
         return decode_multi(&ts);
         break;
+    default:
+	fprintf(stderr,"Error: Unknown type number %d\n",ts.type);
+	exit(EXIT_FAILURE);
     }
     return NULL;
 }

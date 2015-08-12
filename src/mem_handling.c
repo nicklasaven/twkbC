@@ -68,7 +68,6 @@ void* create_new_buffer(buffer_collection *res_buf, size_t needed_space)
     res_buf->buffers[res_buf->nbuffers].used_space_end = new_buffer + needed_space;
     res_buf->buffers[res_buf->nbuffers].buffer_end = (uint8_t*) (new_buffer + size_to_get);
     res_buf->nbuffers++;
-
     return new_buffer;
 }
 

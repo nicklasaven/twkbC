@@ -18,8 +18,6 @@ static FILE *the_file=NULL;
 static int
 readfile(TWKB_BUF *tb, FILE *read_file)
 {
-	//~ printf("Trying to read file %s\n","hej");
-	//~ printf("tb->end_pos = %p, tb->start_pos= %p and size = %d\n",tb->end_pos,tb->start_pos,tb->end_pos-tb->start_pos);
 	if(read_file)
 	{
 		register int c;
@@ -38,9 +36,7 @@ readfile(TWKB_BUF *tb, FILE *read_file)
 		while (n-- > 0 && (c = getc(read_file)) != EOF)
 		{
 			*cs++ = c;
-			//~ printf("n%d = %d \n",n,c);
 		}
-		//~ printf("klart %d \n",n);
 		tb->read_pos = tb->start_pos;
 
 		//~ /*If n > 0 that means we have reached end of file
