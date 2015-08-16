@@ -268,7 +268,7 @@ static char * test_esrijson_point1(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_point1_2",((POINT*) g)->point->npoints == 1);
 
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_point1_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -281,7 +281,7 @@ static char * test_esrijson_line1(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_line1_2",((LINE*) g)->points->npoints == 3);
 
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_line1_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -293,7 +293,7 @@ static char * test_esrijson_polygon1(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_polygon1_1",g->type == 3);
     mu_assert("error, test_esrijson_polygon1_2",( (POLY*) g)->nrings == 1);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[1,2],[2,2],[2,1],[1,1]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[1,2],[2,2],[2,1],[1,1]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_polygon1_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -306,7 +306,7 @@ static char * test_esrijson_polygon2(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_polygon2_1",g->type == 3);
     mu_assert("error, test_esrijson_polygon2_2",((POLY*) g)->nrings == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_polygon2_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -318,7 +318,7 @@ static char * test_esrijson_collection1(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_collection1_1",g->type == 7);
     mu_assert("error, test_esrijson_collection1_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":0}},{\"geometry\":{\"x\":2,\"y\":2,\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":0}}},{\"geometry\":{\"x\":2,\"y\":2,\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_collection1_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -330,7 +330,7 @@ static char * test_esrijson_collection2(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_collection2_1",g->type == 7);
     mu_assert("error, test_esrijson_collection2_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":0}},{\"geometry\":{\"paths\":[[[9,8],[3,2]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":{\"wkid\":0}}},{\"geometry\":{\"paths\":[[[9,8],[3,2]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_collection2_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -342,7 +342,7 @@ static char * test_esrijson_collection3(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_collection3_1",g->type == 7);
     mu_assert("error, test_esrijson_collection3_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":0}},{\"geometry\":{\"rings\":[[[3,3],[3,4],[4,4],[3,3]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":{\"wkid\":0}}},{\"geometry\":{\"rings\":[[[3,3],[3,4],[4,4],[3,3]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_collection3_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -354,7 +354,7 @@ static char * test_esrijson_collection4(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_collection4_1",g->type == 7);
     mu_assert("error, test_esrijson_collection4_2",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":0}},{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":0}},{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":0}}},{\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":{\"wkid\":0}}},{\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_collection4_3",(strcmp(txt, cmp_txt))==0);
     free(txt);
@@ -367,7 +367,7 @@ static char * test_esrijson_collection5(buffer_collection *res_buf) {
     mu_assert("error, test_esrijson_collection5_1",g->type == 7);
     mu_assert("error, test_esrijson_collection5_2",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_esrijson_start(g,0, res_buf);
-    char *cmp_txt="{\"GlobalId\":1,\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":0}},{\"GlobalId\":2,\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":0}},{\"GlobalId\":3,\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":0}}";
+    char *cmp_txt="{\"GlobalId\":1,\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":0}}},{\"GlobalId\":2,\"geometry\":{\"paths\":[[[2,1],[2,2],[1,4]]],\"spatialReference\":{\"wkid\":0}}},{\"GlobalId\":3,\"geometry\":{\"rings\":[[[1,1],[10,20],[20,20],[20,10],[1,1]],[[5,5],[5,6],[6,6],[5,5]]],\"spatialReference\":{\"wkid\":0}}}";
     printf("%s\n",txt);
 	
     mu_assert("error, test_esrijson_collection5_3",(strcmp(txt, cmp_txt))==0);
@@ -380,8 +380,8 @@ static char * test_esrijson_many_geometries1(buffer_collection *res_buf) {
     size_t size;
    uint8_t *buf = hex2intbuf("0100020201000202", &size);
     char *txt = twkb2esriJSON(buf,size,32633);
-    char *cmp_txt="[{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":32633}},{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":32633}}]";
-    //~ printf("%s\n",txt);
+    char *cmp_txt="[{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":32633}}},{\"geometry\":{\"x\":1,\"y\":1,\"spatialReference\":{\"wkid\":32633}}}]";
+    printf("%s\n",txt);
     mu_assert("error, test_esrijson_many_geometries1_1",(strcmp(txt, cmp_txt))==0);
     free(txt);
 free(buf);
@@ -392,7 +392,7 @@ static char * test_esrijson_n_decimals(buffer_collection *res_buf) {
     size_t size;
    uint8_t *buf = hex2intbuf("a504012e04eea7800102000202040102", &size);
     char *txt = twkb2esriJSON(buf,size,4326);
-    char *cmp_txt="[{\"GlobalId\":23,\"geometry\":{\"paths\":[[[10.51127,0.00001],[10.51127,0.00002],[10.51128,0.00004],[10.51127,0.00005]]],\"spatialReference\":4326}}]";
+    char *cmp_txt="[{\"GlobalId\":23,\"geometry\":{\"paths\":[[[10.51127,0.00001],[10.51127,0.00002],[10.51128,0.00004],[10.51127,0.00005]]],\"spatialReference\":{\"wkid\":4326}}}]";
     printf("%s\n",txt);
     mu_assert("error, test_esrijson_n_decimals_1",(strcmp(txt, cmp_txt))==0);
     free(txt);

@@ -75,9 +75,9 @@ static int encode_point(POINT *g,int srid,TEXT_BUF *buf,buffer_collection *mem_b
     num2buf(buf, x,pa->n_decimals[0]);
     txt2buf(buf, ",\"y\":");
     num2buf(buf, y,pa->n_decimals[1]);
-    txt2buf(buf, ",\"spatialReference\":");
+    txt2buf(buf, ",\"spatialReference\":{\"wkid\":");
     int2buf(buf,srid);
-    txt2buf(buf, "}}");
+    txt2buf(buf, "}}}");
     return 0;
 }
 
@@ -116,9 +116,9 @@ static int encode_mpoint(POINT *g,int srid,TEXT_BUF *buf,buffer_collection *mem_
 		txt2buf(buf, ",");
         coords2buf(buf, pa->serialized_pointlist+i*ndims,ndims, pa->n_decimals);
     }
-    txt2buf(buf, "]],\"spatialReference\":");
+    txt2buf(buf, "],\"spatialReference\":{\"wkid\":");
     int2buf(buf,srid);
-    txt2buf(buf, "}}");
+    txt2buf(buf, "}}}");
     return 0;
 }
 
@@ -149,9 +149,9 @@ static int encode_line(LINE *g,int srid,TEXT_BUF *buf,buffer_collection *mem_buf
         coords2buf(buf, pa->serialized_pointlist+i*ndims,ndims, pa->n_decimals);
     }
 
-    txt2buf(buf, "]],\"spatialReference\":");
+    txt2buf(buf, "]],\"spatialReference\":{\"wkid\":");
     int2buf(buf,srid);
-    txt2buf(buf, "}}");
+    txt2buf(buf, "}}}");
     return 0;
 }
 
@@ -198,9 +198,9 @@ static int encode_polygon(POLY *g,int srid,TEXT_BUF *buf,buffer_collection *mem_
 
         txt2buf(buf, "]");
     }
-    txt2buf(buf, "],\"spatialReference\":");
+    txt2buf(buf, "],\"spatialReference\":{\"wkid\":");
     int2buf(buf,srid);
-    txt2buf(buf, "}}");
+    txt2buf(buf, "}}}");
     return 0;
 }
 static int encode_multi(COLLECTION *g,int srid,TEXT_BUF *buf,buffer_collection *mem_buf )
