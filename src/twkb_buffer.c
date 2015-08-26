@@ -17,8 +17,7 @@ varint_u64_read(TWKB_BUF *tb)
 	//~ printf("buffer to read = %d\n",tb->end_pos - tb->read_pos);
     uint64_t nVal = 0;
     int nShift = 0;
-    uint8_t nByte;
-	
+    uint8_t nByte;	
 	
     /* Check so we don't read beyond the twkb 
 	and if we do; try reading more from file 

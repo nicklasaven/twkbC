@@ -66,6 +66,14 @@ typedef struct
 }
 GEOM;
 
+typedef struct
+{
+	int ngeoms;
+	int maxgeoms;
+	GEOM **g;
+}
+GEOMS;
+
 /* POINTYPE */
 typedef struct
 {
@@ -120,13 +128,12 @@ typedef struct
 }
 buffer_collection;
 
+extern buffer_collection *res_buf;
 
-
-void init_res_buf(buffer_collection *res_buf);
-void* get_space(buffer_collection *res_buf, size_t needed_space);
-void* create_new_buffer(buffer_collection *res_buf, size_t needed_space);
-void destroy_buffer(buffer_collection *res_buf);
-
+void init_res_buf();
+void* get_space(size_t needed_space);
+void* create_new_buffer(size_t needed_space);
+void destroy_buffer();
 
 
 /***************************************************************
@@ -135,17 +142,23 @@ void destroy_buffer(buffer_collection *res_buf);
 typedef struct
 {	
 	uint8_t handled_buffer; /*Indicates if this program is resposible for freeing*/
+	uint64_t BufOffsetFromBof;	//Only osed when reading from file
 	uint8_t *start_pos;
 	uint8_t *read_pos;
 	uint8_t *end_pos;
+	uint8_t *max_end_pos;
+	
 }TWKB_BUF;
 
-
-/* Used for passing the parse state between the parsing functions.*/
 typedef struct
 {
-	TWKB_BUF *tb; /* Points to start of TWKB */
-	buffer_collection *rb;
+	float bbox_min[TWKB_IN_MAXCOORDS];
+	float bbox_max[TWKB_IN_MAXCOORDS];
+}BBOX;
+
+
+typedef struct
+{
 	uint8_t has_bbox;
 	uint8_t has_size;
 	uint8_t has_idlist;
@@ -160,13 +173,29 @@ typedef struct
 	double factors[TWKB_IN_MAXCOORDS];
 
 	uint32_t ndims; /* Number of dimensions */
-	
  /* An array to keep delta values from 4 dimensions */
 	int64_t coords[TWKB_IN_MAXCOORDS];
+	
+	BBOX *bbox;
+	size_t next_offset;
+} TWKB_HEADER_INFO;
+
+/* Used for passing the parse state between the parsing functions.*/
+typedef struct
+{
+	TWKB_BUF *tb; /* Points to start of TWKB */
+	//~ buffer_collection *rb;
+	TWKB_HEADER_INFO *thi;
 	
 } TWKB_PARSE_STATE;
 
 
+
+int read_header (TWKB_PARSE_STATE *ts);
+
+
+long int recursive_index_search(TWKB_PARSE_STATE *ts,BBOX *bbox,int nBoxes, GEOMS *res);
+//~ int add_to_geom_array(GEOMS *gs, GEOM *g);
 /*functions for handling the twkb input buffer
 and reading varint*/
 
@@ -177,7 +206,7 @@ int64_t buffer_read_svarint(TWKB_BUF *tb);
 uint8_t buffer_read_byte(TWKB_BUF *tb);
 void buffer_jump_varint(TWKB_BUF *tb,int n);
 
-GEOM* decode_twkb_start(uint8_t *buf, size_t buf_len,buffer_collection *res_buf);
+GEOM* decode_twkb_start(uint8_t *buf, size_t buf_len);
 GEOM* decode_twkb(TWKB_PARSE_STATE *old_ts);
 
 
@@ -188,6 +217,10 @@ typedef GEOM* (*parseFunctions_p)(TWKB_PARSE_STATE*);
 /*For reading twkb from file*/
 int buffer_from_file(char *file_name,TWKB_BUF *tb);
 int readmore(TWKB_BUF *tb);
+long int getReadPos(TWKB_BUF *tb);
+int setReadPos(TWKB_BUF *tb,long int read_pos, size_t len);
+
+int jumpandread(TWKB_BUF *tb,size_t jump, size_t len );
 int close_file();
 
 /***************************************************************
@@ -207,7 +240,7 @@ TEXT_BUF;
 
 int init_text_buf(TEXT_BUF *buf);
 int txt2buf(TEXT_BUF *buf, char *txt);
-void reset_buffer(buffer_collection *res_buf);
+void reset_buffer();
 
 int increase_buf(TEXT_BUF *buf);
 int num2buf(TEXT_BUF *buf, double num,int ndecimals);
@@ -223,8 +256,9 @@ char* encode_esrijson(GEOM *g,int srid,buffer_collection *mem_buf,TEXT_BUF *buf,
 
 
 /*Functions exposed to other programs*/
+extern char* twkb2geoJSON_fromIndexedFile2D(char *file_name, float xmin, float ymin, float xmax, float ymax);
 extern char*  twkb2geoJSON_fromFile(char *file_name);
 extern char* twkb2geoJSON(uint8_t *buf,int buf_len);
 extern char*  twkb2esriJSON_fromFile(char *file_name,int srid);
 extern char* twkb2esriJSON(uint8_t *buf,int buf_len,int srid);
-
+extern char* twkb2esriJSON_fromIndexedFile2D(char *file_name, int srid, float xmin, float ymin, float xmax, float ymax) ;

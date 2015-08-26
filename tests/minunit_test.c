@@ -92,13 +92,13 @@ static uint8_t* hex2intbuf(const char * hexstr,size_t *size)
 
 
 
-static GEOM * test_geoms(char* hexstr,buffer_collection *res_buf) {
+static GEOM * test_geoms(char* hexstr) {
     GEOM *g;
     uint8_t *in;
     size_t size;
     in = hex2intbuf(hexstr, &size);
 
-    g=decode_twkb_start((uint8_t*) in,size,res_buf);
+    g=decode_twkb_start((uint8_t*) in,size);
     free(in);
     return g;
 }
@@ -107,9 +107,9 @@ static GEOM * test_geoms(char* hexstr,buffer_collection *res_buf) {
 /********************************************************************************
 Start testing geoJSON
 *********************************************************************************/
-static char * test_geoJSON_point1(buffer_collection *res_buf) {
+static char * test_geoJSON_point1() {
 
-    GEOM *g = (GEOM*) test_geoms("01000202",res_buf);
+    GEOM *g = (GEOM*) test_geoms("01000202");
     mu_assert("error, test_point1_1",g->type == 1);
     mu_assert("error, test_point1_2",((POINT*) g)->point->npoints == 1);
 
@@ -121,8 +121,8 @@ static char * test_geoJSON_point1(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_geoJSON_line1(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("020003040200020104",res_buf);
+static char * test_geoJSON_line1() {
+    GEOM *g = test_geoms("020003040200020104");
     mu_assert("error, test_geoJSON_line1_1",g->type == 2);
     mu_assert("error, test_geoJSON_line1_2",((LINE*) g)->points->npoints == 3);
 
@@ -134,8 +134,8 @@ static char * test_geoJSON_line1(buffer_collection *res_buf) {
     free(txt);
     return 0;
 }
-static char * test_geoJSON_polygon1(buffer_collection *res_buf) {
-    GEOM *g =test_geoms("0300010502020002020000010100",res_buf);
+static char * test_geoJSON_polygon1() {
+    GEOM *g =test_geoms("0300010502020002020000010100");
     mu_assert("error, test_geoJSON_polygon1_1",g->type == 3);
     mu_assert("error, test_geoJSON_polygon1_2",( (POLY*) g)->nrings == 1);
     char *txt = encode_geojson_start(g,res_buf);
@@ -147,8 +147,8 @@ static char * test_geoJSON_polygon1(buffer_collection *res_buf) {
 }
 
 
-static char * test_geoJSON_polygon2(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("0300020502021226140000132511040808000202000101",res_buf);
+static char * test_geoJSON_polygon2() {
+    GEOM *g = test_geoms("0300020502021226140000132511040808000202000101");
     mu_assert("error, test_geoJSON_polygon2_1",g->type == 3);
     mu_assert("error, test_geoJSON_polygon2_2",((POLY*) g)->nrings == 2);
     char *txt = encode_geojson_start(g,res_buf);
@@ -159,8 +159,8 @@ static char * test_geoJSON_polygon2(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_geoJSON_collection1(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("04000202020202",res_buf);
+static char * test_geoJSON_collection1() {
+    GEOM *g = test_geoms("04000202020202");
     mu_assert("error, test_geoJSON_collection1_1",g->type == 7);
     mu_assert("error, test_geoJSON_collection1_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_geojson_start(g,res_buf);
@@ -171,8 +171,8 @@ static char * test_geoJSON_collection1(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_geoJSON_collection2(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("050002030402000201040210080b0b",res_buf);
+static char * test_geoJSON_collection2() {
+    GEOM *g = test_geoms("050002030402000201040210080b0b");
     mu_assert("error, test_geoJSON_collection2_1",g->type == 7);
     mu_assert("error, test_geoJSON_collection2_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_geojson_start(g,res_buf);
@@ -183,8 +183,8 @@ static char * test_geoJSON_collection2(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_geoJSON_collection3(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("06000202050202122614000013251104080800020200010101040303000202000101",res_buf);
+static char * test_geoJSON_collection3() {
+    GEOM *g = test_geoms("06000202050202122614000013251104080800020200010101040303000202000101");
     mu_assert("error, test_geoJSON_collection3_1",g->type == 7);
     mu_assert("error, test_geoJSON_collection3_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_geojson_start(g,res_buf);
@@ -195,8 +195,8 @@ static char * test_geoJSON_collection3(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_geoJSON_collection4(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("070003010002020200030402000201040300020502021226140000132511040808000202000101",res_buf);
+static char * test_geoJSON_collection4() {
+    GEOM *g = test_geoms("070003010002020200030402000201040300020502021226140000132511040808000202000101");
     mu_assert("error, test_geoJSON_collection4_4",g->type == 7);
     mu_assert("error, test_geoJSON_collection4_4",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_geojson_start(g,res_buf);
@@ -208,8 +208,8 @@ static char * test_geoJSON_collection4(buffer_collection *res_buf) {
 }
 
 
-static char * test_geoJSON_collection5(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("070403020406010002020200030402000201040300020502021226140000132511040808000202000101",res_buf);
+static char * test_geoJSON_collection5() {
+    GEOM *g = test_geoms("070403020406010002020200030402000201040300020502021226140000132511040808000202000101");
     mu_assert("error, test_geoJSON_collection5_4",g->type == 7);
     mu_assert("error, test_geoJSON_collection5_4",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_geojson_start(g,res_buf);
@@ -222,7 +222,7 @@ static char * test_geoJSON_collection5(buffer_collection *res_buf) {
 }
 
 
-static char * test_geoJSON_many_geometries1(buffer_collection *res_buf) {
+static char * test_geoJSON_many_geometries1() {
     size_t size;
    uint8_t *buf = hex2intbuf("0100020201000202", &size);
 	
@@ -235,7 +235,7 @@ free(buf);
     return 0;
 }
 
-static char * test_geoJSON_n_decimals(buffer_collection *res_buf) {
+static char * test_geoJSON_n_decimals() {
     size_t size;
    uint8_t *buf = hex2intbuf("a504012e04eea7800102000202040102", &size);   
     char *txt = twkb2geoJSON(buf,size);
@@ -247,10 +247,19 @@ free(buf);
     return 0;
 }
 
-static char * test_filereading2geoJSON(buffer_collection *res_buf) { 
+static char * test_filereading2geoJSON() { 
 	char *file_name = "testdata/kommuner.twkb";	
 	char *txt = twkb2geoJSON_fromFile(file_name);
 	printf("%s\n",txt);
+	free(txt);
+	return 0;
+}
+
+
+static char * test_filereading2geoJSONindexed() { 
+	char *file_name = "testdata/arealdekke_indexed.twkb";	
+	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 11.79,60.58,11.93,60.67);
+	//~ printf("%s\n",txt);
 	free(txt);
 	return 0;
 }
@@ -261,9 +270,9 @@ static char * test_filereading2geoJSON(buffer_collection *res_buf) {
 Start testing esri JSON
 *********************************************************************************/
 
-static char * test_esrijson_point1(buffer_collection *res_buf) {
+static char * test_esrijson_point1() {
 
-    GEOM *g = (GEOM*) test_geoms("01000202",res_buf);
+    GEOM *g = (GEOM*) test_geoms("01000202");
     mu_assert("error,test_esrijson_point1_1",g->type == 1);
     mu_assert("error, test_esrijson_point1_2",((POINT*) g)->point->npoints == 1);
 
@@ -275,8 +284,8 @@ static char * test_esrijson_point1(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_line1(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("020003040200020104",res_buf);
+static char * test_esrijson_line1() {
+    GEOM *g = test_geoms("020003040200020104");
     mu_assert("error, test_esrijson_line1_1",g->type == 2);
     mu_assert("error, test_esrijson_line1_2",((LINE*) g)->points->npoints == 3);
 
@@ -288,8 +297,8 @@ static char * test_esrijson_line1(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_polygon1(buffer_collection *res_buf) {
-    GEOM *g =test_geoms("0300010502020002020000010100",res_buf);
+static char * test_esrijson_polygon1() {
+    GEOM *g =test_geoms("0300010502020002020000010100");
     mu_assert("error, test_esrijson_polygon1_1",g->type == 3);
     mu_assert("error, test_esrijson_polygon1_2",( (POLY*) g)->nrings == 1);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -301,8 +310,8 @@ static char * test_esrijson_polygon1(buffer_collection *res_buf) {
 }
 
 
-static char * test_esrijson_polygon2(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("0300020502021226140000132511040808000202000101",res_buf);
+static char * test_esrijson_polygon2() {
+    GEOM *g = test_geoms("0300020502021226140000132511040808000202000101");
     mu_assert("error, test_esrijson_polygon2_1",g->type == 3);
     mu_assert("error, test_esrijson_polygon2_2",((POLY*) g)->nrings == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -313,8 +322,8 @@ static char * test_esrijson_polygon2(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_collection1(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("04000202020202",res_buf);
+static char * test_esrijson_collection1() {
+    GEOM *g = test_geoms("04000202020202");
     mu_assert("error, test_esrijson_collection1_1",g->type == 7);
     mu_assert("error, test_esrijson_collection1_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -325,8 +334,8 @@ static char * test_esrijson_collection1(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_collection2(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("050002030402000201040210080b0b",res_buf);
+static char * test_esrijson_collection2() {
+    GEOM *g = test_geoms("050002030402000201040210080b0b");
     mu_assert("error, test_esrijson_collection2_1",g->type == 7);
     mu_assert("error, test_esrijson_collection2_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -337,8 +346,8 @@ static char * test_esrijson_collection2(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_collection3(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("06000202050202122614000013251104080800020200010101040303000202000101",res_buf);
+static char * test_esrijson_collection3() {
+    GEOM *g = test_geoms("06000202050202122614000013251104080800020200010101040303000202000101");
     mu_assert("error, test_esrijson_collection3_1",g->type == 7);
     mu_assert("error, test_esrijson_collection3_2",((COLLECTION*) g)->ngeoms == 2);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -349,8 +358,8 @@ static char * test_esrijson_collection3(buffer_collection *res_buf) {
     return 0;
 }
 
-static char * test_esrijson_collection4(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("070003010002020200030402000201040300020502021226140000132511040808000202000101",res_buf);
+static char * test_esrijson_collection4() {
+    GEOM *g = test_geoms("070003010002020200030402000201040300020502021226140000132511040808000202000101");
     mu_assert("error, test_esrijson_collection4_1",g->type == 7);
     mu_assert("error, test_esrijson_collection4_2",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -362,8 +371,8 @@ static char * test_esrijson_collection4(buffer_collection *res_buf) {
 }
 
 
-static char * test_esrijson_collection5(buffer_collection *res_buf) {
-    GEOM *g = test_geoms("070403020406010002020200030402000201040300020502021226140000132511040808000202000101",res_buf);
+static char * test_esrijson_collection5() {
+    GEOM *g = test_geoms("070403020406010002020200030402000201040300020502021226140000132511040808000202000101");
     mu_assert("error, test_esrijson_collection5_1",g->type == 7);
     mu_assert("error, test_esrijson_collection5_2",((COLLECTION*) g)->ngeoms == 3);
     char *txt = encode_esrijson_start(g,0, res_buf);
@@ -376,7 +385,7 @@ static char * test_esrijson_collection5(buffer_collection *res_buf) {
 }
 
 
-static char * test_esrijson_many_geometries1(buffer_collection *res_buf) {
+static char * test_esrijson_many_geometries1() {
     size_t size;
    uint8_t *buf = hex2intbuf("0100020201000202", &size);
     char *txt = twkb2esriJSON(buf,size,32633);
@@ -388,7 +397,7 @@ free(buf);
     return 0;
 }
 
-static char * test_esrijson_n_decimals(buffer_collection *res_buf) {
+static char * test_esrijson_n_decimals() {
     size_t size;
    uint8_t *buf = hex2intbuf("a504012e04eea7800102000202040102", &size);
     char *txt = twkb2esriJSON(buf,size,4326);
@@ -401,7 +410,7 @@ free(buf);
 }
 
 
-static char * test_esrijson_filereading(buffer_collection *res_buf) { 
+static char * test_esrijson_filereading() { 
 	char *file_name = "testdata/kommuner.twkb";	
 	char *txt = twkb2esriJSON_fromFile(file_name,32633);
 	printf("%s\n",txt);
@@ -409,73 +418,88 @@ static char * test_esrijson_filereading(buffer_collection *res_buf) {
 	return 0;
 }
 
+static char * test_filereading2esrijson_indexed() { 
+	char *file_name = "testdata/arealdekke_indexed.twkb";	
+	char *txt = twkb2esriJSON_fromIndexedFile2D(file_name,4326, 11.79,60.58,11.93,60.67);
+	 //~ printf("%s\n",txt);
+	free(txt);
+	return 0;
+}
 
 static char * all_tests() {
 int i;
     printf("---------------------------------------------------\n");
-    buffer_collection res_buf;
+    //~ buffer_collection res_buf;
 	for (i=0;i<1;i++)
 	{
-    init_res_buf(&res_buf);
-    mu_run_test(test_uvarint1,&res_buf);
-    mu_run_test(test_uvarint2,&res_buf);
-    mu_run_test(test_svarint1,&res_buf);
-    mu_run_test(test_svarint2,&res_buf);
-    mu_run_test(test_svarint3,&res_buf);
-    mu_run_test(test_svarint4,&res_buf);
-    mu_run_test(test_svarint5,&res_buf);
+    init_res_buf();
+    mu_run_test(test_uvarint1);
+    mu_run_test(test_uvarint2);
+    mu_run_test(test_svarint1);
+    mu_run_test(test_svarint2);
+    mu_run_test(test_svarint3);
+    mu_run_test(test_svarint4);
+    mu_run_test(test_svarint5);
 	
 	
-    mu_run_test(test_geoJSON_point1,&res_buf);
+    mu_run_test(test_geoJSON_point1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_line1,&res_buf);
+    mu_run_test(test_geoJSON_line1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_polygon1,&res_buf);
+    mu_run_test(test_geoJSON_polygon1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_polygon2,&res_buf);
+    mu_run_test(test_geoJSON_polygon2);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_collection1,&res_buf);
+    mu_run_test(test_geoJSON_collection1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_collection2,&res_buf);
+    mu_run_test(test_geoJSON_collection2);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_collection3,&res_buf);
+    mu_run_test(test_geoJSON_collection3);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_collection4,&res_buf);
+    mu_run_test(test_geoJSON_collection4);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_collection5,&res_buf);
+    mu_run_test(test_geoJSON_collection5);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_many_geometries1,&res_buf);
+	destroy_buffer();
+	
+	
+    mu_run_test(test_geoJSON_many_geometries1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_geoJSON_n_decimals,&res_buf);
+    mu_run_test(test_geoJSON_n_decimals);
     printf("---------------------------------------------------\n");
 	
-    mu_run_test(test_esrijson_point1,&res_buf);
+    init_res_buf();	
+    mu_run_test(test_esrijson_point1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_line1,&res_buf);
+    mu_run_test(test_esrijson_line1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_polygon1,&res_buf);
+    mu_run_test(test_esrijson_polygon1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_polygon2,&res_buf);
+    mu_run_test(test_esrijson_polygon2);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_collection1,&res_buf);
+    mu_run_test(test_esrijson_collection1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_collection2,&res_buf);
+    mu_run_test(test_esrijson_collection2);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_collection3,&res_buf);
+    mu_run_test(test_esrijson_collection3);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_collection4,&res_buf);
+    mu_run_test(test_esrijson_collection4);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_collection5,&res_buf);
+    mu_run_test(test_esrijson_collection5);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_many_geometries1,&res_buf);
+     destroy_buffer();       
+    
+    mu_run_test(test_esrijson_many_geometries1);
     printf("---------------------------------------------------\n");
-    mu_run_test(test_esrijson_n_decimals,&res_buf);
+    mu_run_test(test_esrijson_n_decimals);
     printf("---------------------------------------------------\n");
     
-    
-  mu_run_test(test_filereading2geoJSON,&res_buf);
+
+  mu_run_test(test_filereading2geoJSONindexed);
+  mu_run_test(test_filereading2esrijson_indexed);
+ //~ mu_run_test(test_filereading2geoJSON,&res_buf);
  //   mu_run_test(test_filereading,&res_buf);
-    destroy_buffer(&res_buf);
+
     }
     return 0;
 }

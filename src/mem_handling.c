@@ -8,18 +8,19 @@
  
 #include <stdio.h>
 #include "twkb.h"
-#define DEFAULT_MEM_CHUNK 1000
+#define DEFAULT_MEM_CHUNK 10000
 
-
-void init_res_buf(buffer_collection *res_buf)
+buffer_collection *res_buf;
+void init_res_buf()
 {
-    res_buf->nbuffers=0;
-    res_buf->max_nbuffers=0;
-    res_buf->buffers=NULL;
+	res_buf = malloc(sizeof(buffer_collection));
+	res_buf->nbuffers=0;
+	res_buf->max_nbuffers=0;
+	res_buf->buffers=NULL;
     return;
 }
 
-void* get_space(buffer_collection *res_buf, size_t needed_space)
+void* get_space(size_t needed_space)
 {
     int i=0;
     void *res;
@@ -37,12 +38,12 @@ void* get_space(buffer_collection *res_buf, size_t needed_space)
 
     /*Ok, we didn't have space enough anywhere, let's allocate some*/
 
-    res = create_new_buffer(res_buf, needed_space);
+    res = create_new_buffer(needed_space);
 
     return res;//create_new_buffer(res_buf, needed_space);
 }
 
-void* create_new_buffer(buffer_collection *res_buf, size_t needed_space)
+void* create_new_buffer(size_t needed_space)
 {
     uint8_t *new_buffer;
     size_t size_to_get;
@@ -71,7 +72,7 @@ void* create_new_buffer(buffer_collection *res_buf, size_t needed_space)
     return new_buffer;
 }
 
-void reset_buffer(buffer_collection *res_buf)
+void reset_buffer()
 {
     int i, len;
     len = res_buf->nbuffers;
@@ -81,7 +82,7 @@ void reset_buffer(buffer_collection *res_buf)
     }
 }
 
-void destroy_buffer(buffer_collection *res_buf)
+void destroy_buffer()
 {
     int i, len;
     len = res_buf->nbuffers;
@@ -90,5 +91,6 @@ void destroy_buffer(buffer_collection *res_buf)
         free(res_buf->buffers[i].buffer_start);
     }
     free(res_buf->buffers);
+    free(res_buf);
     return;
 }
