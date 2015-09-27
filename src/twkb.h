@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <sqlite3.h>
 
 /*Maximum number of dimmensions that a twkb geoemtry 
 can hold according to the specification*/
@@ -262,3 +263,4 @@ extern char* twkb2geoJSON(uint8_t *buf,int buf_len);
 extern char*  twkb2esriJSON_fromFile(char *file_name,int srid);
 extern char* twkb2esriJSON(uint8_t *buf,int buf_len,int srid);
 extern char* twkb2esriJSON_fromIndexedFile2D(char *file_name, int srid, float xmin, float ymin, float xmax, float ymax) ;
+extern char* twkb2geoJSON_fromSQLite();

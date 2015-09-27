@@ -332,3 +332,129 @@ twkb2esriJSON_fromIndexedFile2D(char *file_name, int srid, float xmin, float ymi
 }
 
 
+/*Get the twkb-buffer from SQLite and output as geoJSON
+We have to find soomething faster than parsing to geoJSON*/
+extern char* 
+twkb2geoJSON_fromSQLite()
+{
+	/*twkb structures*/
+	TWKB_HEADER_INFO thi;
+	TWKB_PARSE_STATE ts;
+	TWKB_BUF tb;
+
+	/*Sqlite*/
+	sqlite3 *db;
+	sqlite3_stmt *res;	
+	sqlite3_blob *db_res;
+
+	/*twkb-buffer*/
+	uint8_t *buf;	
+	size_t buf_len;
+
+	BBOX bbox;
+	ts.thi = &thi;
+	ts.thi->bbox=&bbox;
+		
+	/*Init the buffer to keep the internal format as result of twkb-parsing*/
+	init_res_buf(res_buf);
+
+	/*The internal geoemtry format*/
+	GEOM *g;
+
+	int first_run = 1;
+
+	/*The resulting output text (geoJSON)*/
+	TEXT_BUF output_text;
+	init_text_buf(&output_text);
+
+
+	//~ ts.rb = &res_buf;
+	txt2buf(&output_text, "[");	
+
+
+	char *err_msg = 0;
+
+	int rc = sqlite3_open("/home/nicklas/Documents/test.sqlite", &db);
+
+	if (rc != SQLITE_OK) {		
+	fprintf(stderr, "Cannot open database: %s\n", 
+		sqlite3_errmsg(db));
+	sqlite3_close(db);		
+	return NULL;
+	}
+
+	rc = sqlite3_blob_open(db,  "main", "eiendom", "twkb", 1, 0, &db_res);   
+	int n = 0;
+	tb.handled_buffer = 0; 
+	if (rc == SQLITE_OK)
+	{
+	do 
+	{
+	    buf_len = sqlite3_blob_bytes(db_res);
+	    buf = malloc(buf_len);
+	    rc = sqlite3_blob_read(db_res, buf, buf_len, 0);
+	    
+
+		tb.start_pos = tb.read_pos=buf;
+		tb.end_pos=buf+buf_len;
+		ts.tb=&tb;
+	    
+	while (ts.tb->read_pos<ts.tb->end_pos)
+	{
+		g=decode_twkb(&ts);
+		if(first_run)
+			first_run = 0;
+		else
+			txt2buf(&output_text, ",");
+			
+		 encode_geojson(g,res_buf, &output_text);
+		reset_buffer();
+	}
+
+	    free(buf);		
+	    
+	    n++;
+	}while(!sqlite3_blob_reopen(db_res, n));
+	} 
+
+
+	    char *sql = "SELECT twkb, gnr, bnr FROM eiendom limit 10";
+		
+	    rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+	    //rc = sqlite3_exec(db, sql, callback, 0, &err_msg);
+	    
+	    if (rc != SQLITE_OK ) {
+		
+		fprintf(stderr, "Failed to select data\n");
+		fprintf(stderr, "SQL error: %s\n", err_msg);
+
+		sqlite3_free(err_msg);
+		sqlite3_close(db);
+		
+		return NULL;
+	    } 
+
+
+	rc = sqlite3_step(res);
+
+	if (rc == SQLITE_ROW) {
+	printf("%s\n", sqlite3_column_text(res, 0));
+	 tb.handled_buffer = 0; 
+	tb.start_pos = tb.read_pos=buf;
+	tb.end_pos=buf+buf_len;
+
+
+
+
+
+	}
+
+	sqlite3_finalize(res);
+	sqlite3_close(db);
+
+	txt2buf(&output_text, "]");
+	destroy_buffer();
+	return output_text.start_pos;
+}
+
+

@@ -257,8 +257,22 @@ static char * test_filereading2geoJSON() {
 
 
 static char * test_filereading2geoJSONindexed() { 
-	char *file_name = "testdata/arealdekke_indexed.twkb";	
-	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 11.79,60.58,11.93,60.67);
+	char *file_name = "/home/postgres/eiendom.twkb";	
+//	char *file_name = "testdata/arealdekke_indexed.twkb";	
+//	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 11.79,60.58,11.93,60.67);
+	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 347100,6729000,347700,6729600);
+	printf("%s\n",txt);
+	free(txt);
+	return 0;
+}
+
+
+
+static char * test_filereading2geoJSON_sqlite() { 
+	//~ char *file_name = "/home/postgres/eiendom.twkb";	
+//	char *file_name = "testdata/arealdekke_indexed.twkb";	
+//	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 11.79,60.58,11.93,60.67);
+	char *txt = twkb2geoJSON_fromSQLite();
 	//~ printf("%s\n",txt);
 	free(txt);
 	return 0;
@@ -497,6 +511,9 @@ int i;
 
   mu_run_test(test_filereading2geoJSONindexed);
   mu_run_test(test_filereading2esrijson_indexed);
+  mu_run_test(test_filereading2geoJSON_sqlite);
+  
+  
  //~ mu_run_test(test_filereading2geoJSON,&res_buf);
  //   mu_run_test(test_filereading,&res_buf);
 
