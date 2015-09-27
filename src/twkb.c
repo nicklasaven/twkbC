@@ -335,7 +335,7 @@ twkb2esriJSON_fromIndexedFile2D(char *file_name, int srid, float xmin, float ymi
 /*Get the twkb-buffer from SQLite and output as geoJSON
 We have to find soomething faster than parsing to geoJSON*/
 extern char* 
-twkb2geoJSON_fromSQLite()
+twkb2geoJSON_fromSQLite(char *db_name)
 {
 	/*twkb structures*/
 	TWKB_HEADER_INFO thi;
@@ -374,7 +374,7 @@ twkb2geoJSON_fromSQLite()
 
 	char *err_msg = 0;
 
-	int rc = sqlite3_open("/home/nicklas/Documents/test.sqlite", &db);
+	int rc = sqlite3_open(db_name, &db);
 
 	if (rc != SQLITE_OK) {		
 	fprintf(stderr, "Cannot open database: %s\n", 

@@ -270,10 +270,10 @@ static char * test_filereading2geoJSONindexed() {
 
 static char * test_filereading2geoJSON_sqlite() { 
 	//~ char *file_name = "/home/postgres/eiendom.twkb";	
-//	char *file_name = "testdata/arealdekke_indexed.twkb";	
+	char *db_name = "/home/nicklas/Documents/test.sqlite";	
 //	char *txt = twkb2geoJSON_fromIndexedFile2D(file_name, 11.79,60.58,11.93,60.67);
-	char *txt = twkb2geoJSON_fromSQLite();
-	//~ printf("%s\n",txt);
+	char *txt = twkb2geoJSON_fromSQLite(db_name);
+	 printf("%s\n",txt);
 	free(txt);
 	return 0;
 }
