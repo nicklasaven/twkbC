@@ -331,6 +331,30 @@ twkb2esriJSON_fromIndexedFile2D(char *file_name, int srid, float xmin, float ymi
 	return  output_text.start_pos;
 }
 
+static int get_blob(TWKB_BUF *tb,sqlite3_stmt *res, int icol)
+{
+	/*twkb-buffer*/
+	uint8_t *buf;	
+	size_t buf_len;
+	const sqlite3_blob *db_blob;	
+	
+		db_blob = sqlite3_column_blob(res, icol);
+	
+		buf_len = sqlite3_column_bytes(res, icol);
+		buf = malloc(buf_len);
+		memcpy(buf, db_blob,buf_len);
+		
+	    
+	    
+		tb->start_pos = tb->read_pos=buf;
+		tb->end_pos=buf+buf_len;
+			
+		return 0;
+		
+	
+}
+
+
 
 /*Get the twkb-buffer from SQLite and output as geoJSON
 We have to find soomething faster than parsing to geoJSON*/
@@ -345,11 +369,9 @@ twkb2geoJSON_fromSQLite(char *db_name)
 	/*Sqlite*/
 	sqlite3 *db;
 	sqlite3_stmt *res;	
-	sqlite3_blob *db_res;
 
-	/*twkb-buffer*/
-	uint8_t *buf;	
-	size_t buf_len;
+
+
 
 	BBOX bbox;
 	ts.thi = &thi;
@@ -368,7 +390,6 @@ twkb2geoJSON_fromSQLite(char *db_name)
 	init_text_buf(&output_text);
 
 
-	//~ ts.rb = &res_buf;
 	txt2buf(&output_text, "[");	
 
 
@@ -382,42 +403,6 @@ twkb2geoJSON_fromSQLite(char *db_name)
 	sqlite3_close(db);		
 	return NULL;
 	}
-
-	rc = sqlite3_blob_open(db,  "main", "eiendom", "twkb", 1, 0, &db_res);   
-	int n = 0;
-	tb.handled_buffer = 0; 
-	if (rc == SQLITE_OK)
-	{
-	do 
-	{
-	    buf_len = sqlite3_blob_bytes(db_res);
-	    buf = malloc(buf_len);
-	    rc = sqlite3_blob_read(db_res, buf, buf_len, 0);
-	    
-
-		tb.start_pos = tb.read_pos=buf;
-		tb.end_pos=buf+buf_len;
-		ts.tb=&tb;
-	    
-	while (ts.tb->read_pos<ts.tb->end_pos)
-	{
-		g=decode_twkb(&ts);
-		if(first_run)
-			first_run = 0;
-		else
-			txt2buf(&output_text, ",");
-			
-		 encode_geojson(g,res_buf, &output_text);
-		reset_buffer();
-	}
-
-	    free(buf);		
-	    
-	    n++;
-	}while(!sqlite3_blob_reopen(db_res, n));
-	} 
-
-
 	    char *sql = "SELECT twkb, gnr, bnr FROM eiendom limit 10";
 		
 	    rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
@@ -433,21 +418,41 @@ twkb2geoJSON_fromSQLite(char *db_name)
 		
 		return NULL;
 	    } 
+	    
+	    
+	    
+	tb.handled_buffer = 0; 
+	    
+	while (sqlite3_step(res)==SQLITE_ROW)
+	{
+		if(get_blob(&tb,res,0))
+		{
+			fprintf(stderr, "Failed to select data\n");
 
+			sqlite3_close(db);
+			return NULL;
+		}			
+		
+		ts.tb=&tb;
 
-	rc = sqlite3_step(res);
+		
+		while (ts.tb->read_pos<ts.tb->end_pos)
+		{
+			g=decode_twkb(&ts);
+			if(first_run)
+				first_run = 0;
+			else
+				txt2buf(&output_text, ",");
+				
+			 encode_geojson(g,res_buf, &output_text);
+			reset_buffer();
+		}
 
-	if (rc == SQLITE_ROW) {
-	printf("%s\n", sqlite3_column_text(res, 0));
-	 tb.handled_buffer = 0; 
-	tb.start_pos = tb.read_pos=buf;
-	tb.end_pos=buf+buf_len;
+		    free(tb.start_pos);
+		    //~ n++;
+	}//while(!sqlite3_blob_reopen(db_res, n));
+	
 
-
-
-
-
-	}
 
 	sqlite3_finalize(res);
 	sqlite3_close(db);
@@ -456,5 +461,3 @@ twkb2geoJSON_fromSQLite(char *db_name)
 	destroy_buffer();
 	return output_text.start_pos;
 }
-
-
